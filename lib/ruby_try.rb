@@ -1,7 +1,10 @@
 require "ruby_try/version"
 
 module Kernel
-  def Try
+  def Try(*args)
+    if args
+      
+    end
     return unless block_given?
     value = yield
     RubyTry::Success.new(value)
