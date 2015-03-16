@@ -2,8 +2,16 @@ require "ruby_try/version"
 
 module Kernel
   def Try(*args)
-    if args
-      
+    raise "Only params OR exclusive block are permited, not both" if args.any? && block_given?
+    args.each do |method_name|
+      self.send(:alias_method, :"original_#{method_name}", method_name)
+      self.send(:define_method, method_name) do |*args|
+        begin
+          RubyTry::Success.new(self.send("original_#{method_name}", *args))
+        rescue => e
+          RubyTry::Failure.new(e)
+        end
+      end
     end
     return unless block_given?
     value = yield
@@ -27,7 +35,7 @@ module RubyTry
 
     def value
       value = @value
-      while(value.is_a?(Try))
+      while (value.is_a?(Try))
         value = value.value
       end
       value

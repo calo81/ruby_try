@@ -83,6 +83,19 @@ describe RubyTry do
       it 'returns a successful try object' do
         expect(wrapped_object.returns_4).to be_success
       end
+
+      it 'returns a value for a successful try object' do
+        expect(wrapped_object.returns_4.value).to eq(4)
+      end
+
+      it 'returns a failure try object' do
+        expect(wrapped_object.raiser).to_not be_success
+      end
+
+      it 'return failed object contains exception' do
+        expect(wrapped_object.raiser.value).to be_a(RuntimeError)
+        expect(wrapped_object.raiser.value.message).to eq('WOW')
+      end
     end
   end
 end
